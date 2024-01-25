@@ -1,16 +1,36 @@
-﻿import requests
+import requests
 import time
 import os
 import json
 from colored_print import log
 from pyfiglet import Figlet
 from requests.auth import HTTPBasicAuth
+import subprocess
 
 
 session = requests.Session()
 
 #sprawdzenie 
 def check_images():
+    # czy plik 'access_token.txt' istnieje
+    if os.path.isfile('access_token.txt'):      
+        with open('access_token.txt', 'r') as file:
+            accessToken = file.read().strip()
+    else:
+        log.err("Brak Autoryzacji. [Wygeneruj accessToken w menu!]")
+        return
+
+    # czy plik 'url.txt' istnieje
+    if os.path.isfile('url.txt'):
+        with open('url.txt', 'r') as file:
+            entrypoint = file.read().strip()
+    else:
+        log.err("Brak URL sklepu. [Wygeneruj accessToken w menu!]")
+        return
+    headers = {
+    'Authorization': f'Bearer {accessToken}',
+    'Content-Type': 'application/json'
+    }
     images_url = f'{entrypoint}/webapi/rest/product-images?page=1'
     try:
         response = session.get(images_url, headers=headers)
@@ -60,7 +80,7 @@ def delete_images():
             response.raise_for_status()
             end_time = time.time()
             log.pink(f'Żądanie GET do {images_url} trwało {end_time - start_time} sekund')
-            time.sleep(0.3)
+            time.sleep(0.5)
         except requests.exceptions.RequestException as e:
             log.err(f"Błąd podczas pobierania listy zdjęć: {e}")
             break
@@ -133,8 +153,9 @@ def display_menu():
     print(f.renderText('SHID'))
 
     print("1. Wyczyść zdjęcia produktów")
-    print("2. Generuj accessToken")
-    print("3. Wyjdz")
+    print("2. ustaw seo-friendly alty zdjęć")
+    print("3. Generuj accessToken")
+    print("4. Wyjdz")
 
     choice = input("Wybierz opcję: ")
     return choice
@@ -176,13 +197,15 @@ def get_access_token():
 def main():
     while True:
         choice = display_menu()
-        if choice == "3":
+        if choice == "4":
             break
         elif choice == "1":
             delete_images()
         elif choice == "2":
+            subprocess.run(["python", "img_name_SEO_API.py",])
+        elif choice == "3":
             get_access_token()
-
+            4
 if __name__ == "__main__":
     main()
 
