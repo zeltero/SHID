@@ -10,9 +10,8 @@ import subprocess
 
 session = requests.Session()
 
-#sprawdzenie 
+
 def check_images():
-    # czy plik 'access_token.txt' istnieje
     if os.path.isfile('access_token.txt'):      
         with open('access_token.txt', 'r') as file:
             accessToken = file.read().strip()
@@ -20,7 +19,6 @@ def check_images():
         log.err("Brak Autoryzacji. [Wygeneruj accessToken w menu!]")
         return
 
-    # czy plik 'url.txt' istnieje
     if os.path.isfile('url.txt'):
         with open('url.txt', 'r') as file:
             entrypoint = file.read().strip()
@@ -42,7 +40,6 @@ def check_images():
     return 'list' in images and images['list']
 
 def delete_images():
-    # czy plik 'access_token.txt' istnieje
     if os.path.isfile('access_token.txt'):      
         with open('access_token.txt', 'r') as file:
             accessToken = file.read().strip()
@@ -50,7 +47,6 @@ def delete_images():
         log.err("Brak Autoryzacji. [Wygeneruj accessToken w menu!]")
         return
 
-    # czy plik 'url.txt' istnieje
     if os.path.isfile('url.txt'):
         with open('url.txt', 'r') as file:
             entrypoint = file.read().strip()
@@ -143,7 +139,7 @@ def delete_images():
         except requests.exceptions.RequestException as e:
             log.err(f"Błąd podczas usuwania zdjęć: {e}")
 
-    # Wywołuje weryfikacje wyczyszczenia zdjęć
+    
     if not check_images():
         log.warn("WSZYSTKIE ZDJECIA ZOSTAŁY USUNIĘTE")
 
@@ -172,10 +168,8 @@ def get_access_token():
 
     url = f'{shop_url}/webapi/rest/auth'
 
-    # Wykonaj żądanie POST
     response = requests.post(url, auth=HTTPBasicAuth(client_id, client_secret))
 
-    # Sprawdź, czy żądanie zakończyło się sukcesem
     if response.status_code == 200:
         access_token = response.json()['access_token']
         log.success(f'[SUCCESS] Access Token: {access_token}')
